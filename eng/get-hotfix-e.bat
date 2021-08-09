@@ -13,14 +13,17 @@ Write-Host ""
 
 $outfile = [Environment]::GetFolderPath('Desktop')+"\patch-evidence.log"
 $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"
-$RegKey = "ReleaseId"
+$RegKey1 = "ReleaseId"
+$RegKey2 = "DisplayVersion"
 
 (Get-WmiObject Win32_OperatingSystem).Caption > $outfile
-(Get-ItemProperty $RegPath -name $RegKey -ErrorAction SilentlyContinue).$RegKey >> $outfile
+(Get-ItemProperty $RegPath -name $RegKey1 -ErrorAction SilentlyContinue).$RegKey1 >> $outfile
+(Get-ItemProperty $RegPath -name $RegKey2 -ErrorAction SilentlyContinue).$RegKey2 >> $outfile
 get-hotfix >> $outfile
 
 gwmi -Computer . -Class Win32_NetworkAdapterConfiguration | Select IPAddress, MACAddress, Caption >> $outfile
 Get-WmiObject Win32_NetworkAdapterConfiguration | Where-Object{$_.IPEnabled -eq "TRUE"} | Format-List MACAddress >> $outfile
 
+echo "get-hotfix Ver.1.2" >> $outfile
 
 Write-Host "Finished"
